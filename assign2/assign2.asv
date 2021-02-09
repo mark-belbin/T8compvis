@@ -8,33 +8,33 @@ clear
 
 % ~~~~~~ Hough inputs ~~~~~~~~~~~ %
 r_max = 120;   % Maximum circle radius                 
-thresh = 1000;  % Hough accumulator threshold    
+thresh = 25;  % Hough accumulator threshold    
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ %
 
 
 % Import images and convert to grayscale %
 im1_rgb = imread('im1.png');
 im2_rgb = imread('im2.png');
-im1 = rgb2gray(im1_rgb);
-im2 = rgb2gray(im2_rgb);
-im2 = im2(1:469, 1:625); % Crop im2 to match im1 dimensions
+im1_gray = rgb2gray(im1_rgb);
+im2_gray = rgb2gray(im2_rgb);
+im2_gray = im2_gray(1:469, 1:625); % Crop im2 to match im1 dimensions
 
 % Height and width of im1/im2
-height = size(im1, 1);
-width = size(im1, 2);
+height = size(im1_gray, 1);
+width = size(im1_gray, 2);
 
 % Plot Original grayscale images
 figure;
 subplot(121);
-imshow(im1);
+imshow(im1_gray);
 title('GrayScale Im1');
 subplot(122);
-imshow(im2);
+imshow(im2_gray);
 title('GrayScale Im1');
 
 % Apply gaussian filter
-im1 = imgaussfilt(im1, 7.0);
-im2 = imgaussfilt(im2, 3.0);
+im1 = imgaussfilt(im1_gray, 7.0);
+im2 = imgaussfilt(im2_gray, 3.0);
 
 % Put images through canny edge detector
 im1 = edge(im1, 'canny');
@@ -63,8 +63,8 @@ for r = 1:1:r_max
             if im1(y,x) == 1
                 for theta = 0:0.1:2*pi
                     % Calculate circle pixel locations
-                    a = uint8(x - r * cos(theta));
-                    b = uint8(y - r * sin(theta));
+                    a = uint16(x - r * cos(theta));
+                    b = uint16(y - r * sin(theta));
                     
                     % Check if circle is within accumulator bounds
                     if (a < 1) || (a > width)
@@ -80,29 +80,66 @@ for r = 1:1:r_max
     end
 end
 
-
-%x = A_im1(:,:,1);
-%y = A_im1(:,:,2);
-%z = A_im1(:,:,3);
-%figure; 
-%plot3(x,y,z,'.-');
-%xlabel('Circle x0 [a]');
-%ylabel('Circle y0 [b]');
-%zlabel('Circle Radius [r]');
+% Find local maxima in 3D array
+maxima = islocalmax(A_im1);
 
 circle_count = 0;
-for r = 1:1:r_max
+circle_x = [];
+circle_y = [];
+circle_r = [];
+
+% Create array of circles
+for r = r_max:-1:20
     for y = 1:1:height
         for x = 1:1:width
-            if A_im1(x,y,r) > thresh
-               im1 = insertShape(im1,'circle',[150 280 35],'LineWidth',2);
+            if (maxima(x,y,r) == 1) && (A_im1(x,y,r) > thresh)
+               circle_count = circle_count + 1;
+               circle_x = [circle_x; x];
+               circle_y = [circle_y; y];
+               circle_r = [circle_r; r];
             end
         end
     end
 end
 
-disp(circle_count)
+% matrix of circle values
+circles = [circle_x circle_y circle_r];
+
+good_circles = circles(1,:);
+good_circle_count = 1;
+
+% Eliminate redundant circles
+for circ = 1:1:circle_count
+    x0 = circles(circ,1);
+    y0 = circles(circ,2);
+    
+    flag_similar = 0;
+    for good_circ = 1:1:good_circle_count
+        x1 = good_circles(good_circ, 1);
+        y1 = good_circles(good_circ, 2);
+        
+        if abs(x1-x0) >= 20 && ((y1-y0)/y0) >= 0.25
+            
+        end
+            
+    end
+    
+    
+end
 
 
+disp(circle_count) % For reference to see how many resulting circles
+
+% Draw Circles
+im1_rgb = insertShape(im1_rgb,'circle',circles,'LineWidth',3,'Color','red');
+
+% Plot Result image
+figure;
+subplot(121);
+imshow(im1_gray);
+title('Im1 Original');
+subplot(122);
+imshow(im1_rgb);
+title('Im1 With Detected Circles');
 
 
