@@ -30,7 +30,7 @@ imshow(im1_gray);
 title('GrayScale Im1');
 subplot(122);
 imshow(im2_gray);
-title('GrayScale Im1');
+title('GrayScale Im2');
 
 % Apply gaussian filter
 im1 = imgaussfilt(im1_gray, 7.0);
