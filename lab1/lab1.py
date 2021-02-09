@@ -3,13 +3,20 @@ Created on Mon Feb  3 01:32:57 2020
 
 @author: ebrahim
 """
+"""
+Modified on Mon Feb 8, 2021
+
+@author: Mark Belbin
+         Rodney Windsor
+         Raylene Mitchell
+"""
 
 import cv2
 import numpy as np
 
 pi = 3.1415926
 
-img = cv2.imread('test2.jpg') # Remember to add the path for the test1.jpg
+img = cv2.imread('test3.jpg') # Remember to add the path for the test1.jpg
 size = img.shape
 
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -25,7 +32,7 @@ dilate = cv2.dilate(edges, (7,7), iterations=2)
 
 cv2.imwrite('Dilate.jpg', dilate)
 
-lines = cv2.HoughLines(edges,0.8,0.005,200) # The parameters are accuracies and threshold
+lines = cv2.HoughLines(edges,1.0,0.002,75) # The parameters are accuracies and threshold
 num = len(lines)
 
 HorizontalLines = []
@@ -44,13 +51,15 @@ for n in range(num):
     x2 = int(x0 - size[1]*(-b))
     y2 = int(y0 - size[0]*(a))
 
+    degrees = (theta/pi * 180)
+
     # Horizontal lines
-    if (theta >= pi/2-0.2) and (theta <= pi/2+0.2):
+    if (degrees >= 89.0) and (degrees <= 91.0):
         HorizontalLines.append((x1,y1,x2,y2))
-    else:
+    elif (degrees >= 0) and (degrees <= 1):
         VerticalLines.append((x1,y1,x2,y2))
 
-# Cycle through and remove similar lines
+# Cycle through and remove similar lines by comparing the x and y axis intercepts!
 
 HorizontalLines_Good = []
 VerticalLines_Good = []
@@ -89,7 +98,7 @@ for line in VerticalLines:
         # Find X when y is zero
         goodline_x = -line_b/line_m
     
-        if abs(goodline_x-line_x) <= 50:
+        if abs(goodline_x-line_x) <= 100:
                 flag_similar = True
     
     if flag_similar != True:
@@ -120,7 +129,7 @@ for line in HorizontalLines:
         line_m = dy/dx
         goodline_b = goodline[1] - line_m*goodline[0]  
     
-        if abs(goodline_b-line_b) <= 50:
+        if abs(goodline_b-line_b) <= 150:
                 flag_similar = True
     
     if flag_similar != True:

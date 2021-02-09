@@ -1,8 +1,9 @@
-# -*- coding: utf-8 -*-
 """
-Created on Mon Feb  3 01:32:57 2020
+Created on Mon Feb 8, 2021
 
-@author: ebrahim
+@author: Mark Belbin
+         Rodney Windsor
+         Raylene Mitchell
 """
 
 import cv2
@@ -43,7 +44,7 @@ while cap.isOpened():
 
         cv2.imwrite('Dilate.jpg', dilate)
 
-        lines = cv2.HoughLines(edges,1.0,0.001,50) # The parameters are accuracies and threshold
+        lines = cv2.HoughLines(edges,1.25,0.001,35) # The parameters are accuracies and threshold
         num = len(lines)
 
         HorizontalLines = []
@@ -109,7 +110,7 @@ while cap.isOpened():
                 # Find X when y is zero
                 goodline_x = -line_b/line_m
             
-                if abs(goodline_x-line_x) <= 50:
+                if abs(goodline_x-line_x) <= 65:
                         flag_similar = True
             
             if flag_similar != True:
@@ -140,7 +141,7 @@ while cap.isOpened():
                 line_m = dy/dx
                 goodline_b = goodline[1] - line_m*goodline[0]  
             
-                if abs(goodline_b-line_b) <= 50:
+                if abs(goodline_b-line_b) <= 65:
                         flag_similar = True
             
             if flag_similar != True:
@@ -181,8 +182,10 @@ while cap.isOpened():
         for point in intersects:
             cv2.circle(frame, (point[0], point[1]), radius=20, color=(0,255,0), thickness=-1)
 
-        # Resize image to see on 1080p monitor
+        # Save image in folder
+        #cv2.imwrite("VideoFrameResults/output" + f'{frame_count:03d}' + ".jpg", frame)
 
+        # Resize image to see on 1080p monitor
         scale_percent = 40 # percent of original size
         width = int(frame.shape[1] * scale_percent / 100)
         height = int(frame.shape[0] * scale_percent / 100)
@@ -192,8 +195,7 @@ while cap.isOpened():
 
         cv2.imshow('Hough Result', resized)
         cv2.waitKey(0)
-        cv2.destroyWindow("Hough Result")
-        
+        cv2.destroyWindow("Hough Result")  
 
 cap.release() 
 cv2.destroyAllWindows()
