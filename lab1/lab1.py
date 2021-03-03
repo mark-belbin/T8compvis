@@ -171,5 +171,5 @@ for point in intersects:
     img = cv2.circle(img, (point[0], point[1]), radius=20, color=(0,255,0), thickness=-1)
 
 cv2.imwrite('HoughOut.jpg', img)
-
-
+cv2.imshow('img', img)
+cv2.waitKey(0)
