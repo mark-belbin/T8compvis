@@ -20,6 +20,7 @@ Rx=[1 0 0;0 cos(ax) -sin(ax); 0 sin(ax) cos(ax)];
 Ry=[cos(ay) 0 sin(ay);0 1 0; -sin(ay) 0 cos(ay)];
 Rz=[ cos(az) -sin(az) 0; sin(az) cos(az) 0;0 0 1];
 R=Rz*Ry*Rx;
+
 %Extrinsic camera matrix
 Mext=[R [tx;ty;tz]];
 
@@ -30,3 +31,5 @@ ph(2,:)=ph(2,:)./ph(3,:);
 ph = ph(1:2,:); % Get rid of 3rd row
 p = reshape(ph, [], 1); % reshape into 2Nx1 vector
 return
+
+end
