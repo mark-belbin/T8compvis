@@ -93,17 +93,17 @@ figure;
 subplot(121);
 imshow(im1), title('Camera View 1 with Points');
 %convert image points from normalized to unnormalized
-u=K*p1;
-for i=1:length(u)
-    rectangle('Position',[u(1,i)-2 u(2,i)-2 4 4], 'FaceColor', 'r');
+up1=K*p1;
+for i=1:length(up1)
+    rectangle('Position',[up1(1,i)-2 up1(2,i)-2 4 4], 'FaceColor', 'r');
 end
 
 subplot(122);
 imshow(im2), title('Camera View 2 with Points');
 %convert image points from normalized to unnormalized
-u=K*p2;
-for i=1:length(u)
-    rectangle('Position',[u(1,i)-2 u(2,i)-2 4 4], 'FaceColor', 'r');
+up2=K*p2;
+for i=1:length(up2)
+    rectangle('Position',[up2(1,i)-2 up2(2,i)-2 4 4], 'FaceColor', 'r');
 end
 
 % Calculating the essential matrix
@@ -198,5 +198,5 @@ disp(E);
 %Although the above is different but as we said it
 %is up to a scale, hence divide by E(1,2)
 disp('calculated E after scaling= ');
-disp(E/(-E(1,2)));
+disp(E/(E(2,1)));
 
