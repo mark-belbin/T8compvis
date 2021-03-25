@@ -1,0 +1,48 @@
+%%%~~        Engi 8410        ~~%%%
+%%%~~   Design Assignment #4  ~~%%%
+%%%~~         Group 13        ~~%%%
+%%%~~       Mar 24, 2021      ~~%%%
+
+clear;
+close all;
+
+img_rgb = imread('im1.jpg');
+img = rgb2gray(img_rgb);
+
+figure;
+imshow(img)
+
+% Harris corner detector input parameters %
+sigma=1;
+thresh=1000;
+radius=4;
+alpha=0.04;
+
+% Derivitive Masks
+dx = [-1 0 1; -1 0 1; -1 0 1];
+dy = dx';
+
+[height, width] = size(img);
+
+% Rather than pad the image or have odd results around the edges,
+% only perform the convolution on pixels that have a full kernel of pixels
+% around them.
+
+% 
+Ix = imfilter(img, dx, 'same');
+Iy = imfilter(img, dy, 'same');
+
+%
+g = fspecial('gaussian', round(6*sigma), sigma);
+Ixx = conv2(Ix.^2, g);
+Iyy = conv2(Iy.^2, g);
+Ixy = conv2(Ix.*Iy, g);
+
+% Harris Corner Measure
+Rim = (Ixx.*Iyy - Ixy.^2)-alpha*((Ixx + Iyy).^2);
+
+% Find local maxi
+
+
+
+
