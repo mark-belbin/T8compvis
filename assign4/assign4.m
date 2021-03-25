@@ -12,8 +12,12 @@ img = rgb2gray(img_rgb);
 
 %Show original image in grayscale
 figure;
-imshow(img)
-title('GrayScale Im1');
+subplot(121);
+imshow(img_rgb);
+title('Original Image');
+subplot(122);
+imshow(img);
+title('GrayScale Image');
 
 % Harris corner detector input parameters %
 sigma=1;
@@ -22,7 +26,7 @@ radius=5;
 alpha=0.08;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% Derivitive Masks
+% Derivative Masks
 dx = [-1 0 1; -1 0 1; -1 0 1];
 dy = dx';
 
@@ -38,6 +42,10 @@ Ixy = conv2(Ix.*Iy, g);
 
 % Harris corner measure creation
 R_Harris = (Ixx.*Iyy - Ixy.^2)-alpha*((Ixx + Iyy).^2);
+
+figure;
+clims = [4500, 5000];
+imagesc(R_Harris, clims);
 
 % Find local maxima from corner measure
 N = 2*radius+1; % Size of mask.
